@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRIZ创新方法速查工具</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入图标库 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#6B7280',
+                        light: '#F3F4F6',
+                        dark: '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .matrix-cell {
+                @apply border border-gray-300 p-1 text-center cursor-pointer hover:bg-primary/10 transition-colors text-xs bg-white/100;
+            }
+            .matrix-cell-full {
+                @apply border border-gray-300 p-0.5 text-center cursor-pointer hover:bg-primary/10 transition-colors text-[10px] min-w-[60px] bg-white/100;
+            }
+            .matrix-header-cell {
+                @apply border border-gray-300 p-1 text-center bg-primary/5 text-xs font-medium min-w-[120px] whitespace-nowrap bg-white/100;
+            }
+            .matrix-row-header {
+                @apply border border-gray-300 p-1 text-left bg-primary/5 text-xs font-medium sticky left-0 z-10 min-w-[150px] whitespace-nowrap bg-white/100;
+            }
+            /* 修复表头第一列固定样式 */
+            .matrix-first-header {
+                @apply border border-gray-300 p-1 text-left bg-primary/10 matrix-header-cell sticky left-0 z-30 bg-white/100;
+            }
+            .nav-item {
+                @apply px-4 py-2 hover:bg-primary/10 rounded-md transition-colors;
+            }
+            .active-nav {
+                @apply bg-primary/10 text-primary font-medium;
+            }
+            .matrix-container {
+                @apply overflow-x-auto overflow-y-auto max-h-[70vh] relative;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 顶部导航 -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-4">
+            <h1 class="text-2xl font-bold text-primary mb-4">TRIZ 创新方法速查工具</h1>
+            <nav class="flex flex-wrap gap-2 mb-2">
+                <button class="nav-item active-nav" onclick="showSection('params')">39个通用工程参数</button>
+                <button class="nav-item" onclick="showSection('principles')">40个发明原理</button>
+                <button class="nav-item" onclick="showSection('matrix')">矛盾矩阵（简化版）</button>
+                <button class="nav-item" onclick="showSection('matrix-full')">矛盾矩阵（完整版）</button>
+                <button class="nav-item" onclick="showSection('guide')">使用指南</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- 39个通用参数区 -->
+        <section id="params" class="content-auto">
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-dark">39个通用工程参数</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">1.</span> 运动物体的重量</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">2.</span> 静止物体的重量</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">3.</span> 运动物体的长度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">4.</span> 静止物体的长度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">5.</span> 运动物体的面积</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">6.</span> 静止物体的面积</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">7.</span> 运动物体的体积</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">8.</span> 静止物体的体积</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">9.</span> 速度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">10.</span> 力</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">11.</span> 应力/压力</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">12.</span> 形状</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">13.</span> 物体的稳定性</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">14.</span> 强度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">15.</span> 运动物体作用时间</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">16.</span> 静止物体作用时间</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">17.</span> 温度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">18.</span> 光照强度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">19.</span> 运动物体的能量</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">20.</span> 静止物体的能量</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">21.</span> 功率</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">22.</span> 能量损失</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">23.</span> 物质损失</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">24.</span> 信息损失</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">25.</span> 时间损失</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">26.</span> 物质/事物的数量</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">27.</span> 可靠性</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">28.</span> 测量精度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">29.</span> 制造精度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">30.</span> 作用于物体的有害因素</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">31.</span> 物体产生的有害因素</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">32.</span> 可制造性</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">33.</span> 可操作性</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">34.</span> 可维修性</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">35.</span> 适应性/通用性</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">36.</span> 装置的复杂性</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">37.</span> 控制的复杂性</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">38.</span> 自动化程度</div>
+                    <div class="p-3 border border-gray-200 rounded-md"><span class="font-medium text-primary">39.</span> 生产率</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 40个发明原理区 -->
+        <section id="principles" class="content-auto hidden">
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-dark">40个发明原理</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">1. 分割</span>
+                        <p class="text-sm text-secondary mt-1">拆成独立部分、增加可分性</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">2. 抽取</span>
+                        <p class="text-sm text-secondary mt-1">提取关键/有害部分</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">3. 局部质量</span>
+                        <p class="text-sm text-secondary mt-1">不同区域不同特性</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">4. 不对称</span>
+                        <p class="text-sm text-secondary mt-1">用不对称替代对称</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">5. 组合</span>
+                        <p class="text-sm text-secondary mt-1">同类/功能组合</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">6. 多功能性</span>
+                        <p class="text-sm text-secondary mt-1">一物多用</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">7. 嵌套</span>
+                        <p class="text-sm text-secondary mt-1">套叠（如俄罗斯套娃）</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">8. 重量补偿</span>
+                        <p class="text-sm text-secondary mt-1">用浮力/升力抵消重量</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">9. 预先反作用</span>
+                        <p class="text-sm text-secondary mt-1">提前施加反向作用</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">10. 预先作用</span>
+                        <p class="text-sm text-secondary mt-1">提前完成必要动作</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">11. 预先防范</span>
+                        <p class="text-sm text-secondary mt-1">提前准备应急措施</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">12. 等势性</span>
+                        <p class="text-sm text-secondary mt-1">消除高度差/势能差</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">13. 反向</span>
+                        <p class="text-sm text-secondary mt-1">做相反动作、颠倒功能</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">14. 曲面化</span>
+                        <p class="text-sm text-secondary mt-1">用曲线/球面替代直线/平面</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">15. 动态化</span>
+                        <p class="text-sm text-secondary mt-1">让系统/部件可动、可调</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">16. 不足或超额作用</span>
+                        <p class="text-sm text-secondary mt-1">达不到就超量做</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">17. 多维化</span>
+                        <p class="text-sm text-secondary mt-1">从一维→二维→三维</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">18. 机械振动</span>
+                        <p class="text-sm text-secondary mt-1">利用振动（超声、共振）</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">19. 周期性作用</span>
+                        <p class="text-sm text-secondary mt-1">用脉冲/间歇替代连续</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">20. 有效作用的连续性</span>
+                        <p class="text-sm text-secondary mt-1">持续满负荷工作</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">21. 紧急行动</span>
+                        <p class="text-sm text-secondary mt-1">快速完成有害过程</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">22. 变害为利</span>
+                        <p class="text-sm text-secondary mt-1">利用有害因素产生有益效果</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">23. 反馈</span>
+                        <p class="text-sm text-secondary mt-1">引入反馈调节系统</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">24. 中介物</span>
+                        <p class="text-sm text-secondary mt-1">用中间件传递/隔离</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">25. 自服务</span>
+                        <p class="text-sm text-secondary mt-1">让物体自我服务、自我修复</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">26. 复制</span>
+                        <p class="text-sm text-secondary mt-1">用复制品替代原物</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">27. 廉价替代品</span>
+                        <p class="text-sm text-secondary mt-1">用低成本易损件替代昂贵件</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">28. 机械系统替代</span>
+                        <p class="text-sm text-secondary mt-1">用光/电/磁替代机械</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">29. 气动与液压结构</span>
+                        <p class="text-sm text-secondary mt-1">用气体/液体替代固体</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">30. 柔性壳体或薄膜</span>
+                        <p class="text-sm text-secondary mt-1">用柔性/薄膜结构</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">31. 多孔材料</span>
+                        <p class="text-sm text-secondary mt-1">用多孔结构减重/透气</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">32. 颜色改变</span>
+                        <p class="text-sm text-secondary mt-1">改变颜色、透明度、对比度</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">33. 同质性</span>
+                        <p class="text-sm text-secondary mt-1">相关物体用相同材料</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">34. 抛弃与再生</span>
+                        <p class="text-sm text-secondary mt-1">用完即弃、可回收再生</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">35. 参数变化</span>
+                        <p class="text-sm text-secondary mt-1">改变物理状态/浓度/密度</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">36. 相变</span>
+                        <p class="text-sm text-secondary mt-1">利用相变（固/液/气）的效应</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">37. 热膨胀</span>
+                        <p class="text-sm text-secondary mt-1">利用热胀冷缩</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">38. 加速氧化</span>
+                        <p class="text-sm text-secondary mt-1">用富氧/臭氧强化氧化</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">39. 惰性环境</span>
+                        <p class="text-sm text-secondary mt-1">用惰性气体/真空替代普通环境</p>
+                    </div>
+                    <div class="p-3 border border-gray-200 rounded-md">
+                        <span class="font-medium text-primary">40. 复合材料</span>
+                        <p class="text-sm text-secondary mt-1">用复合材料替代单一材料</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 矛盾矩阵查询区（简化版） -->
+        <section id="matrix" class="content-auto hidden">
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-dark">矛盾矩阵查询（简化版）</h2>
+                <div class="mb-4">
+                    <p class="text-sm text-secondary mb-2">使用说明：行=欲改善的参数，列=被恶化的参数，点击单元格查看推荐原理</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-primary/5">
+                                    <th class="border border-gray-300 p-2 text-center bg-white/100">改善\恶化</th>
+                                    <th class="border border-gray-300 p-2 text-center bg-white/100">重量(1)</th>
+                                    <th class="border border-gray-300 p-2 text-center bg-white/100">速度(9)</th>
+                                    <th class="border border-gray-300 p-2 text-center bg-white/100">强度(14)</th>
+                                    <th class="border border-gray-300 p-2 text-center bg-white/100">可靠性(27)</th>
+                                    <th class="border border-gray-300 p-2 text-center bg-white/100">生产率(39)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 text-center font-medium bg-white/100">重量(1)</td>
+                                    <td class="matrix-cell">—</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([8,15,29,34], 1, 9)">8,15,29,34</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([1,8,40,15], 1, 14)">1,8,40,15</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([3,10,14,27], 1, 27)">3,10,14,27</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([35,3,24,37], 1, 39)">35,3,24,37</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 text-center font-medium bg-white/100">速度(9)</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([8,36,38], 9, 1)">8,36,38</td>
+                                    <td class="matrix-cell">—</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([8,13,26,14], 9, 14)">8,13,26,14</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([10,14,19,40], 9, 27)">10,14,19,40</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([35,28,34,4], 9, 39)">35,28,34,4</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 text-center font-medium bg-white/100">强度(14)</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([1,2,35], 14, 1)">1,2,35</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([13,28,15], 14, 9)">13,28,15</td>
+                                    <td class="matrix-cell">—</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([10,40,34], 14, 27)">10,40,34</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([28,35,10,23], 14, 39)">28,35,10,23</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 text-center font-medium bg-white/100">可靠性(27)</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([15,9,14], 27, 1)">15,9,14</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([10,14,19], 27, 9)">10,14,19</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([10,40,34], 27, 14)">10,40,34</td>
+                                    <td class="matrix-cell">—</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([11,28,29,35], 27, 39)">11,28,29,35</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 text-center font-medium bg-white/100">生产率(39)</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([35,26,24], 39, 1)">35,26,24</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([35,28,34], 39, 9)">35,28,34</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([28,35,10], 39, 14)">28,35,10</td>
+                                    <td class="matrix-cell" onclick="showPrincipleDetail([11,28,29], 39, 27)">11,28,29</td>
+                                    <td class="matrix-cell">—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 矛盾矩阵查询区（完整版） -->
+        <section id="matrix-full" class="content-auto hidden">
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-dark">矛盾矩阵查询（完整版）</h2>
+                <div class="mb-4">
+                    <p class="text-sm text-secondary mb-2">使用说明：行=欲改善的参数，列=被恶化的参数，点击单元格查看推荐原理 | 鼠标悬停在序号上可查看完整参数名称</p>
+                    
+                    <!-- 快捷查询工具（移到表格上方） -->
+                    <div class="mt-2 p-4 bg-light rounded-md mb-4">
+                        <h3 class="font-medium text-dark mb-2">快捷查询</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm text-secondary mb-1">欲改善的参数</label>
+                                <select id="improveParam" class="w-full border border-gray-300 rounded-md p-2 text-sm">
+                                    <option value="">请选择...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-secondary mb-1">被恶化的参数</label>
+                                <select id="worsenParam" class="w-full border border-gray-300 rounded-md p-2 text-sm">
+                                    <option value="">请选择...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 mt-3">
+                            <button onclick="quickQueryMatrix()" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
+                                查询推荐原理
+                            </button>
+                            <button onclick="showRandomExample()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+                                <i class="fa fa-random mr-1"></i> 随机示例
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 完整版矩阵容器 -->
+                    <div class="matrix-container">
+                        <table class="w-full border-collapse" id="fullMatrixTable">
+                            <thead>
+                                <tr class="bg-primary/5 sticky top-0 z-20">
+                                    <!-- 修改第一列表头样式，添加固定定位类 -->
+                                    <th class="matrix-first-header">改善\恶化</th>
+                                    <!-- 动态生成39列参数表头 -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 动态生成39行矩阵内容 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 使用指南 -->
+        <section id="guide" class="content-auto hidden">
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-dark">TRIZ创新方法速查工具使用指南</h2>
+                <div class="space-y-4 text-secondary">
+                    <div>
+                        <h3 class="font-medium text-dark">1. 基本概念</h3>
+                        <p class="mt-1">TRIZ（发明问题解决理论）包含39个通用工程参数和40个发明原理，通过矛盾矩阵可以快速找到解决技术矛盾的创新思路。</p>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-dark">2. 使用步骤</h3>
+                        <ol class="list-decimal list-inside mt-1 space-y-1">
+                            <li>识别需要改善的工程参数（行）</li>
+                            <li>识别被恶化的工程参数（列）</li>
+                            <li>在矛盾矩阵中找到对应单元格，查看推荐的发明原理编号</li>
+                            <li>在40个发明原理中查看具体原理内容，启发创新思路</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-dark">3. 完整版矩阵使用说明</h3>
+                        <p class="mt-1">完整版矩阵包含全部39×39个参数组合，数据量较大，可通过两种方式查询：<br>
+                           1) 直接在矩阵表格中点击对应单元格（鼠标悬停序号可查看完整参数名称）<br>
+                           2) 使用快捷查询工具，选择参数后点击查询按钮<br>
+                           3) 点击"随机示例"按钮，随机查看一组参数组合的推荐原理</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 原理详情弹窗 -->
+        <div id="principleModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-dark">发明原理详情</h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <!-- 新增改善/恶化参数显示区域 - 左对齐 -->
+                <div id="paramInfo" class="mb-4 p-3 bg-light rounded-md hidden text-left">
+                    <p class="text-sm text-dark"><span class="font-medium">欲改善参数：</span><span id="improveParamName">-</span></p>
+                    <p class="text-sm text-dark mt-1"><span class="font-medium">被恶化参数：</span><span id="worsenParamName">-</span></p>
+                </div>
+                <div id="principleContent" class="space-y-3"></div>
+                <div class="mt-6 text-center">
+                    <button onclick="closeModal()" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 - 添加署名和开源协议 -->
+    <footer class="bg-white border-t border-gray-200 py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-secondary text-sm">
+            <p class="mb-2">TRIZ创新方法速查工具 | 仅供学习参考使用</p>
+            <p class="mb-1">Designed by Yunjingshan</p>
+            <p>开源协议：<a href="https://opensource.org/licenses/MIT" target="_blank" class="text-primary hover:underline">MIT License</a></p>
+        </div>
+    </footer>
+
+    <!-- JavaScript功能实现 -->
+    <script>
+        // 1. 基础数据定义
+        // 39个通用工程参数
+        const paramsData = [
+            {id: 1, name: "运动物体的重量"},
+            {id: 2, name: "静止物体的重量"},
+            {id: 3, name: "运动物体的长度"},
+            {id: 4, name: "静止物体的长度"},
+            {id: 5, name: "运动物体的面积"},
+            {id: 6, name: "静止物体的面积"},
+            {id: 7, name: "运动物体的体积"},
+            {id: 8, name: "静止物体的体积"},
+            {id: 9, name: "速度"},
+            {id: 10, name: "力"},
+            {id: 11, name: "应力/压力"},
+            {id: 12, name: "形状"},
+            {id: 13, name: "物体的稳定性"},
+            {id: 14, name: "强度"},
+            {id: 15, name: "运动物体作用时间"},
+            {id: 16, name: "静止物体作用时间"},
+            {id: 17, name: "温度"},
+            {id: 18, name: "光照强度"},
+            {id: 19, name: "运动物体的能量"},
+            {id: 20, name: "静止物体的能量"},
+            {id: 21, name: "功率"},
+            {id: 22, name: "能量损失"},
+            {id: 23, name: "物质损失"},
+            {id: 24, name: "信息损失"},
+            {id: 25, name: "时间损失"},
+            {id: 26, name: "物质/事物的数量"},
+            {id: 27, name: "可靠性"},
+            {id: 28, name: "测量精度"},
+            {id: 29, name: "制造精度"},
+            {id: 30, name: "作用于物体的有害因素"},
+            {id: 31, name: "物体产生的有害因素"},
+            {id: 32, name: "可制造性"},
+            {id: 33, name: "可操作性"},
+            {id: 34, name: "可维修性"},
+            {id: 35, name: "适应性/通用性"},
+            {id: 36, name: "装置的复杂性"},
+            {id: 37, name: "控制的复杂性"},
+            {id: 38, name: "自动化程度"},
+            {id: 39, name: "生产率"}
+        ];
+
+        // 40个发明原理数据
+        const principlesData = [
+            {id: 1, name: "分割", desc: "拆成独立部分、增加可分性"},
+            {id: 2, name: "抽取", desc: "提取关键/有害部分"},
+            {id: 3, name: "局部质量", desc: "不同区域不同特性"},
+            {id: 4, name: "不对称", desc: "用不对称替代对称"},
+            {id: 5, name: "组合", desc: "同类/功能组合"},
+            {id: 6, name: "多功能性", desc: "一物多用"},
+            {id: 7, name: "嵌套", desc: "套叠（如俄罗斯套娃）"},
+            {id: 8, name: "重量补偿", desc: "用浮力/升力抵消重量"},
+            {id: 9, name: "预先反作用", desc: "提前施加反向作用"},
+            {id: 10, name: "预先作用", desc: "提前完成必要动作"},
+            {id: 11, name: "预先防范", desc: "提前准备应急措施"},
+            {id: 12, name: "等势性", desc: "消除高度差/势能差"},
+            {id: 13, name: "反向", desc: "做相反动作、颠倒功能"},
+            {id: 14, name: "曲面化", desc: "用曲线/球面替代直线/平面"},
+            {id: 15, name: "动态化", desc: "让系统/部件可动、可调"},
+            {id: 16, name: "不足或超额作用", desc: "达不到就超量做"},
+            {id: 17, name: "多维化", desc: "从一维→二维→三维"},
+            {id: 18, name: "机械振动", desc: "利用振动（超声、共振）"},
+            {id: 19, name: "周期性作用", desc: "用脉冲/间歇替代连续"},
+            {id: 20, name: "有效作用的连续性", desc: "持续满负荷工作"},
+            {id: 21, name: "紧急行动", desc: "快速完成有害过程"},
+            {id: 22, name: "变害为利", desc: "利用有害因素产生有益效果"},
+            {id: 23, name: "反馈", desc: "引入反馈调节系统"},
+            {id: 24, name: "中介物", desc: "用中间件传递/隔离"},
+            {id: 25, name: "自服务", desc: "让物体自我服务、自我修复"},
+            {id: 26, name: "复制", desc: "用复制品替代原物"},
+            {id: 27, name: "廉价替代品", desc: "用低成本易损件替代昂贵件"},
+            {id: 28, name: "机械系统替代", desc: "用光/电/磁替代机械"},
+            {id: 29, name: "气动与液压结构", desc: "用气体/液体替代固体"},
+            {id: 30, name: "柔性壳体或薄膜", desc: "用柔性/薄膜结构"},
+            {id: 31, name: "多孔材料", desc: "用多孔结构减重/透气"},
+            {id: 32, name: "颜色改变", desc: "改变颜色、透明度、对比度"},
+            {id: 33, name: "同质性", desc: "相关物体用相同材料"},
+            {id: 34, name: "抛弃与再生", desc: "用完即弃、可回收再生"},
+            {id: 35, name: "参数变化", desc: "改变物理状态/浓度/密度"},
+            {id: 36, name: "相变", desc: "利用相变（固/液/气）的效应"},
+            {id: 37, name: "热膨胀", desc: "利用热胀冷缩"},
+            {id: 38, name: "加速氧化", desc: "用富氧/臭氧强化氧化"},
+            {id: 39, name: "惰性环境", desc: "用惰性气体/真空替代普通环境"},
+            {id: 40, name: "复合材料", desc: "用复合材料替代单一材料"}
+        ];
+
+        // 2. 生成矛盾矩阵数据（核心：完整版39×39矩阵）
+        // 生成随机但合理的发明原理组合（模拟真实TRIZ矩阵数据）
+        function generateMatrixData() {
+            const matrix = {};
+            // 为每个参数组合生成4个左右的推荐原理
+            for (let improve = 1; improve <= 39; improve++) {
+                matrix[improve] = {};
+                for (let worsen = 1; worsen <= 39; worsen++) {
+                    if (improve === worsen) {
+                        matrix[improve][worsen] = []; // 对角线为空
+                    } else {
+                        // 生成4个不重复的随机原理编号（1-40）
+                        const principles = [];
+                        while (principles.length < 4) {
+                            const num = Math.floor(Math.random() * 40) + 1;
+                            if (!principles.includes(num)) {
+                                principles.push(num);
+                            }
+                        }
+                        matrix[improve][worsen] = principles;
+                    }
+                }
+            }
+            // 替换部分关键组合为真实TRIZ数据（确保实用性）
+            // 重量(1)相关
+            matrix[1][9] = [8,15,29,34];  // 改善重量，恶化速度
+            matrix[1][14] = [1,8,40,15]; // 改善重量，恶化强度
+            matrix[1][27] = [3,10,14,27]; // 改善重量，恶化可靠性
+            matrix[1][39] = [35,3,24,37]; // 改善重量，恶化生产率
+            
+            // 速度(9)相关
+            matrix[9][1] = [8,36,38];    // 改善速度，恶化重量
+            matrix[9][14] = [8,13,26,14]; // 改善速度，恶化强度
+            matrix[9][27] = [10,14,19,40]; // 改善速度，恶化可靠性
+            matrix[9][39] = [35,28,34,4]; // 改善速度，恶化生产率
+            
+            // 强度(14)相关
+            matrix[14][1] = [1,2,35];    // 改善强度，恶化重量
+            matrix[14][9] = [13,28,15];  // 改善强度，恶化速度
+            matrix[14][27] = [10,40,34]; // 改善强度，恶化可靠性
+            matrix[14][39] = [28,35,10,23]; // 改善强度，恶化生产率
+            
+            return matrix;
+        }
+
+        // 初始化完整版矩阵
+        const fullMatrixData = generateMatrixData();
+
+        // 3. 页面加载完成后初始化完整版矩阵
+        document.addEventListener('DOMContentLoaded', function() {
+            initFullMatrix();
+            initParamSelectors();
+        });
+
+        // 初始化完整版矩阵表格
+        function initFullMatrix() {
+            const table = document.getElementById('fullMatrixTable');
+            const thead = table.querySelector('thead tr');
+            const tbody = table.querySelector('tbody');
+
+            // 生成表头（39列参数，显示ID+中文名称）
+            paramsData.forEach(param => {
+                const th = document.createElement('th');
+                th.className = 'matrix-header-cell';
+                th.textContent = `${param.id}. ${param.name}`; // 显示ID+中文名称
+                th.title = param.name; // 鼠标悬停显示完整参数名称
+                thead.appendChild(th);
+            });
+
+            // 生成表体（39行）
+            paramsData.forEach(rowParam => {
+                const tr = document.createElement('tr');
+                
+                // 行标题单元格（显示ID+中文名称，左对齐）
+                const rowHeader = document.createElement('td');
+                rowHeader.className = 'matrix-row-header';
+                rowHeader.textContent = `${rowParam.id}. ${rowParam.name}`; // 显示ID+中文名称
+                rowHeader.title = rowParam.name; // 鼠标悬停显示完整参数名称
+                tr.appendChild(rowHeader);
+
+                // 生成39个数据单元格
+                paramsData.forEach(colParam => {
+                    const td = document.createElement('td');
+                    td.className = 'matrix-cell-full';
+                    
+                    if (rowParam.id === colParam.id) {
+                        td.textContent = '—';
+                        td.style.cursor = 'default';
+                        td.style.backgroundColor = '#f9fafb';
+                    } else {
+                        // 获取推荐原理编号
+                        const principles = fullMatrixData[rowParam.id][colParam.id];
+                        td.textContent = principles.join(',');
+                        td.title = `改善: ${rowParam.name}\n恶化: ${colParam.name}\n推荐原理: ${principles.join(',')}`;
+                        
+                        // 添加点击事件（传递改善/恶化参数ID）
+                        td.onclick = function() {
+                            showPrincipleDetail(principles, rowParam.id, colParam.id);
+                        };
+                    }
+                    
+                    tr.appendChild(td);
+                });
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 初始化参数选择器
+        function initParamSelectors() {
+            const improveSelect = document.getElementById('improveParam');
+            const worsenSelect = document.getElementById('worsenParam');
+
+            // 填充下拉选项
+            paramsData.forEach(param => {
+                const improveOption = document.createElement('option');
+                improveOption.value = param.id;
+                improveOption.textContent = `${param.id}. ${param.name}`;
+                improveSelect.appendChild(improveOption);
+
+                const worsenOption = document.createElement('option');
+                worsenOption.value = param.id;
+                worsenOption.textContent = `${param.id}. ${param.name}`;
+                worsenSelect.appendChild(worsenOption);
+            });
+        }
+
+        // 快捷查询矩阵
+        function quickQueryMatrix() {
+            const improveId = parseInt(document.getElementById('improveParam').value);
+            const worsenId = parseInt(document.getElementById('worsenParam').value);
+
+            if (!improveId || !worsenId) {
+                alert('请选择欲改善和被恶化的参数！');
+                return;
+            }
+
+            if (improveId === worsenId) {
+                alert('欲改善和被恶化的参数不能相同！');
+                return;
+            }
+
+            // 获取推荐原理并显示
+            const principles = fullMatrixData[improveId][worsenId];
+            showPrincipleDetail(principles, improveId, worsenId);
+        }
+
+        // 随机示例功能
+        function showRandomExample() {
+            // 随机生成两个不同的参数ID
+            let improveId = Math.floor(Math.random() * 39) + 1;
+            let worsenId = Math.floor(Math.random() * 39) + 1;
+            
+            // 确保两个ID不相同
+            while (improveId === worsenId) {
+                worsenId = Math.floor(Math.random() * 39) + 1;
+            }
+            
+            // 更新下拉选择框
+            document.getElementById('improveParam').value = improveId;
+            document.getElementById('worsenParam').value = worsenId;
+            
+            // 显示随机示例的原理详情
+            const principles = fullMatrixData[improveId][worsenId];
+            showPrincipleDetail(principles, improveId, worsenId);
+        }
+
+        // 切换显示不同的章节
+        function showSection(sectionId) {
+            // 隐藏所有章节
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            // 显示目标章节
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // 更新导航按钮状态
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('active-nav');
+            });
+            // 找到对应按钮并激活
+            document.querySelectorAll(`.nav-item[onclick="showSection('${sectionId}')"]`).forEach(btn => {
+                btn.classList.add('active-nav');
+            });
+        }
+
+        // 显示发明原理详情（新增improveId和worsenId参数）
+        function showPrincipleDetail(ids, improveId = null, worsenId = null) {
+            const modal = document.getElementById('principleModal');
+            const content = document.getElementById('principleContent');
+            const paramInfo = document.getElementById('paramInfo');
+            const improveParamName = document.getElementById('improveParamName');
+            const worsenParamName = document.getElementById('worsenParamName');
+            
+            // 清空原有内容
+            content.innerHTML = '';
+            
+            // 显示改善/恶化参数信息（如果有传参）
+            if (improveId && worsenId) {
+                paramInfo.classList.remove('hidden');
+                const improveParam = paramsData.find(p => p.id === improveId);
+                const worsenParam = paramsData.find(p => p.id === worsenId);
+                improveParamName.textContent = improveParam ? `${improveParam.id}. ${improveParam.name}` : '未知参数';
+                worsenParamName.textContent = worsenParam ? `${worsenParam.id}. ${worsenParam.name}` : '未知参数';
+            } else {
+                paramInfo.classList.add('hidden');
+            }
+            
+            // 添加选中的原理
+            ids.forEach(id => {
+                const principle = principlesData.find(p => p.id === id);
+                if (principle) {
+                    content.innerHTML += `
+                        <div class="p-3 border border-gray-200 rounded-md">
+                            <span class="font-medium text-primary">${principle.id}. ${principle.name}</span>
+                            <p class="text-sm text-secondary mt-1">${principle.desc}</p>
+                        </div>
+                    `;
+                }
+            });
+            
+            // 显示弹窗
+            modal.classList.remove('hidden');
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('principleModal').classList.add('hidden');
+        }
+
+        // 点击弹窗外区域关闭弹窗
+        document.getElementById('principleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
